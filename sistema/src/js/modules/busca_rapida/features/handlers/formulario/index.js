@@ -1,0 +1,6 @@
+export * from './handle-click-gerar-pdf'
+export * from './handle-click-adicionar-regra-empresa-btn'
+export * from './handle-click-abrir-clausula-por-id'
+export * from './handle-filtrar-clausulas'
+export * from './handle-click-selecionar-todas-clausulas'
+export * from './handle-click-limpar-filtros'

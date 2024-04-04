@@ -1,0 +1,72 @@
+﻿namespace Ineditta.API.ViewModels.Sindicatos.ViewModels
+{
+    public class RelatorioSindicatoViewModel
+    {
+        public string? SindLaboralSituacao { get; set; }
+        public string? SindLaboralCnpj { get; set; }
+        public string? SindLaboralCodigo { get; set; }
+        public string? SindLaboralSigla { get; set; }
+        public string? SindLaboralRazao { get; set; }
+        public string? SindLaboralDenominacao { get; set; }
+        public string? SindLaboralLogradouro { get; set; }
+        public string? SindLaboralMunicipio { get; set; }
+        public string? SindLaboralUf { get; set; }
+        public string? SindLaboralFone1 { get; set; }
+        public string? SindLaboralFone2 { get; set; }
+        public string? SindLaboralFone3 { get; set; }
+        public string? SindLaboralRamal { get; set; }
+        public string? SindLaboralNegociador { get; set; }
+        public string? SindLaboralContribuicao { get; set; }
+        public string? SindLaboralEnquadramento { get; set; }
+        public string? SindLaboralEmail1 { get; set; }
+        public string? SindLaboralEmail2 { get; set; }
+        public string? SindLaboralEmail3 { get; set; }
+        public string? SindLaboralSite { get; set; }
+        public string? SindLaboralTwitter { get; set; }
+        public string? SindLaboralFacebook { get; set; }
+        public string? SindLaboralInstagram { get; set; }
+        public string? SindLaboralGrau { get; set; }
+        public string? SindLaboralStatus { get; set; }
+        public string? SindLaboralDataNegociacao { get; set; }
+        public string? FederacaoLaboralSigla { get; set; }
+        public string? FederacaoLaboralNome { get; set; }
+        public string? FederacaoLaboralCnpj { get; set; }
+        public string? ConfederacaoLaboralSigla { get; set; }
+        public string? ConfederacaoLaboralNome { get; set; }
+        public string? ConfederacaoLaboralCnpj { get; set; }
+        public string? CentralSindicalSigla { get; set; }
+        public string? CentralSindicalNome { get; set; }
+        public string? CentralSindicalCnpj { get; set; }
+        public string? SindPatronalSituacao { get; set; }
+        public string? SindPatronalCnpj { get; set; }
+        public string? SindPatronalCodigo { get; set; }
+        public string? SindPatronalSigla { get; set; }
+        public string? SindPatronalRazao { get; set; }
+        public string? SindPatronalDenominacao { get; set; }
+        public string? SindPatronalLogradouro { get; set; }
+        public string? SindPatronalMunicipio { get; set; }
+        public string? SindPatronalUf { get; set; }
+        public string? SindPatronalFone1 { get; set; }
+        public string? SindPatronalFone2 { get; set; }
+        public string? SindPatronalFone3 { get; set; }
+        public string? SindPatronalRamal { get; set; }
+        public string? SindPatronalNegociador { get; set; }
+        public string? SindPatronalContribuicao { get; set; }
+        public string? SindPatronalEnquadramento { get; set; }
+        public string? SindPatronalEmail1 { get; set; }
+        public string? SindPatronalEmail2 { get; set; }
+        public string? SindPatronalEmail3 { get; set; }
+        public string? SindPatronalSite { get; set; }
+        public string? SindPatronalTwitter { get; set; }
+        public string? SindPatronalFacebook { get; set; }
+        public string? SindPatronalInstagram { get; set; }
+        public string? SindPatronalGrau { get; set; }
+        public string? SindPatronalStatus { get; set; }
+        public string? FederacaoPatronalSigla { get; set; }
+        public string? FederacaoPatronalNome { get; set; }
+        public string? FederacaoPatronalCnpj { get; set; }
+        public string? ConfederacaoPatronalSigla { get; set; }
+        public string? ConfederacaoPatronalNome { get; set; }
+        public string? ConfederacaoPatronalCnpj { get; set; }
+    }
+}

@@ -1,0 +1,395 @@
+name: Build and publish artifacts from Ineditta project
+run-name: ${{ github.actor }} build and publish out GitHub Actions 🚀
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allows you to run this workflow manually from the Actions tab
+    inputs:
+      deployment:
+        description: "Deseja fazer o deploy em qual ambiente?"
+        required: true
+        default: "producao"
+      run_number:
+        description: "Número do build"
+        required: true
+        default: "1"
+env:
+  REGISTRY: ineditta.azurecr.io
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.deployment != 'producao')
+    strategy:
+      matrix:
+        include:
+          - name: API
+            image_name: api
+            dockerfile: ./src/backend/Ineditta.API/Dockerfile
+            context: .
+          - name: Frontend
+            image_name: frontend
+            dockerfile: ./dockerfile.prod
+            context: .
+          - name: SSO
+            image_name: sso
+            dockerfile: ./services/auth/Dockerfile
+            context: ./services/auth
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+
+      - name: "Delete appSettings.Development.json"
+        run: |
+          rm -rf ./src/backend/Ineditta.API/appsettings.Development.json
+        if: ${{ matrix.name == 'API' }}
+
+      - name: "Delete config file from php"
+        run: |
+          rm -rf ./sistema/includes/config/config.json
+        if: ${{ matrix.name == 'Frontend' }}
+
+      - name: "Login to ACR"
+        run: |
+          docker login ${{ env.REGISTRY }} -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }}
+
+      - name: "Build and push image"
+        run: |
+          docker build ${{ matrix.context }} -f ${{ matrix.dockerfile }} -t ${{ env.REGISTRY }}/${{ matrix.image_name }}:${{ github.run_number }}
+          docker tag ${{ env.REGISTRY }}/${{ matrix.image_name }}:${{ github.run_number }} ${{ env.REGISTRY }}/${{ matrix.image_name }}:latest
+          docker push ${{ env.REGISTRY }}/${{ matrix.image_name }}:${{ github.run_number }}
+          docker push ${{ env.REGISTRY }}/${{ matrix.image_name }}:latest
+
+      - name: Docker logout
+        run: |
+          docker logout ${{ env.REGISTRY }}
+  deploy-hml:
+    needs: build-and-push-image
+    runs-on: ubuntu-latest
+    environment: homologacao
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.deployment != 'producao')
+    env:
+      PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      HOST: ${{secrets.HOST}}
+      USER: ${{secrets.USER}}
+      URL: ${{vars.URL}}
+      FRONTEND_CONFIG: ${{vars.FRONTEND_CONFIG}}
+      FRONTEND_ORIGINS: ${{vars.FRONTEND_ORIGINS}}
+      KEYCLOAK_CONFIG: ${{vars.KEYCLOAK_CONFIG}}
+      KEYCLOACK_AUTHORITY: ${{vars.KEYCLOACK_AUTHORITY}}
+      KEYCLOACK_ADMIN: ${{vars.KEYCLOACK_ADMIN}}
+      KEYCLOACK_AUDIENCE: ${{vars.KEYCLOACK_AUDIENCE}}
+      DBCONNECTION: ${{secrets.DBCONNECTION}}
+      CONFIG_JSON: ${{secrets.CONFIG_JSON}}
+      PORT: ${{secrets.PORT}}
+      DOCKER_LOGIN: ${{secrets.DOCKER_LOGIN}}
+      STORAGE_PATH: ${{vars.STORAGE_PATH}}
+      SMTP_HOST: ${{secrets.SMTP_HOST}}
+      SMTP_PORT: ${{secrets.SMTP_PORT}}
+      SMTP_USERNAME: ${{secrets.SMTP_USERNAME}}
+      SMTP_PASSWORD: ${{secrets.SMTP_PASSWORD}}
+      SMTP_FROMEMAIL: ${{secrets.SMTP_FROMEMAIL}}
+      EMAIL_AWS_SOURCE: ${{secrets.EMAIL_AWS_SOURCE}}
+      EMAIL_AWS_ACCESS_KEY: ${{secrets.EMAIL_AWS_ACCESS_KEY}}
+      EMAIL_AWS_SECRET_KEY: ${{secrets.EMAIL_AWS_SECRET_KEY}}
+      COMPARATIVO_MAPA_SINDICAL: ${{vars.COMPARATIVO_MAPA_SINDICAL}}
+      FORMULARIO_APLICACAO: ${{vars.FORMULARIO_APLICACAO}}
+      RELATORIOACOMPANHAMENTOCCT: ${{vars.RELATORIOACOMPANHAMENTOCCT}}
+      RELATORIOCLAUSULAS: ${{vars.RELATORIOCLAUSULAS}}
+      GESTAO_CHAMADO_URL: ${{vars.GESTAO_CHAMADO_URL}}
+      FEATURE_MANAGEMENT_NOTIFICA_CALENDARIO_SINDICAL: ${{vars.FEATURE_MANAGEMENT_NOTIFICA_CALENDARIO_SINDICAL}}
+      AI_CHATGPT_APIKEY: ${{secrets.AI_CHATGPT_APIKEY}}
+      AI_CHATGPT_MODEL: ${{vars.AI_CHATGPT_MODEL}}
+      MTE_URL: ${{vars.MTE_URL}}
+      FEATUREMANAGEMENT_UTILIZAIA: ${{vars.FEATUREMANAGEMENT_UTILIZAIA}}
+      OCR_AWS_ACCESS_KEY: ${{secrets.OCR_AWS_ACCESS_KEY}}
+      OCR_AWS_SECRET_KEY: ${{secrets.OCR_AWS_SECRET_KEY}}
+      FEATUREMANAGEMENT_UTILIZAOCR: ${{vars.FEATUREMANAGEMENT_UTILIZAOCR}}
+    strategy:
+      matrix:
+        include:
+          - name: API
+            image: api
+            container: api
+            network: ineditta
+
+          - name: Frontend
+            image: frontend
+            container: frontend
+            network: ineditta
+    steps:
+      - name: "SSH and execute commands API"
+        run: |
+          # Write private key to a file
+          echo "$PRIVATE_KEY" > private_key
+          chmod 600 private_key
+
+          # Use SSH to connect to VM and process the image/container combo
+          ssh -o StrictHostKeyChecking=no -i private_key -p $PORT $USER@$HOST << EOF
+
+          # Check, stop and remove the container if it exists
+          if docker ps -a --format '{{.Names}}' | grep '^${{ matrix.container }}$'; then
+            docker stop ${{ matrix.container }}
+            docker rm ${{ matrix.container }}
+          fi
+
+          # Create the network if it doesn't exist
+          (docker network ls | grep ${{matrix.network}}) || docker network create ${{matrix.network}}
+          echo 'Processing ${{ matrix.image }}'
+          docker login ${{secrets.DOCKER_LOGIN}}
+          docker pull $REGISTRY/${{ matrix.image }}:${{github.run_number}}
+          docker run --network ${{matrix.network}} \
+                  -e ASPNETCORE_ENVIRONMENT=Homologacao \
+                  -e Origins='$FRONTEND_ORIGINS' \
+                  -e ConnectionStrings__InedittaConnection='$DBCONNECTION' \
+                  -e Keycloack__Authority='$KEYCLOACK_AUTHORITY' \
+                  -e Keycloack__Admin='$KEYCLOACK_ADMIN' \
+                  -e Keycloack__Audience='$KEYCLOACK_AUDIENCE' \
+                  -e ASPNETCORE_URLS='http://+:80' \
+                  -e LANG=pt_BR.UTF-8 \
+                  -e LANGUAGE=pt_BR.UTF-8 \
+                  -e LC_ALL=pt_BR.UTF-8 \
+                  -e TZ='America/Sao_Paulo' \
+                  -e PATH_BASE='/api' \
+                  -e FileStorage__Path='$STORAGE_PATH' \
+                  -e Frontend__Url='$URL' \
+                  -e Email__Smtp__Host='$SMTP_HOST' \
+                  -e Email__Smtp__Port='$SMTP_PORT' \
+                  -e Email__Smtp__Username='$SMTP_USERNAME' \
+                  -e Email__Smtp__Password='$SMTP_PASSWORD' \
+                  -e Email__Smtp__FromEmail='$SMTP_FROMEMAIL' \
+                  -e Email__Aws__Source='$EMAIL_AWS_SOURCE' \
+                  -e Email__Aws__AccessKey='$EMAIL_AWS_ACCESS_KEY' \
+                  -e Email__Aws__SecretKey='$EMAIL_AWS_SECRET_KEY' \
+                  -e TemplateExcel__ComparativoMapaSindical='$COMPARATIVO_MAPA_SINDICAL' \
+                  -e TemplateExcel__FormularioAplicacao='$FORMULARIO_APLICACAO' \
+                  -e TemplateExcel__RelatorioAcompanhamentoCct='$RELATORIOACOMPANHAMENTOCCT' \
+                  -e TemplateExcel__RelatorioClausulas='$RELATORIOCLAUSULAS' \
+                  -e GestaoDeChamados__Url='$GESTAO_CHAMADO_URL' \
+                  -e FeatureManagement__NotificaCalendarioSindical='$FEATURE_MANAGEMENT_NOTIFICA_CALENDARIO_SINDICAL' \
+                  -e FeatureManagement__UtilizaIA='$FEATUREMANAGEMENT_UTILIZAIA' \
+                  -e FeatureManagement__UtilizaOcr='$FEATUREMANAGEMENT_UTILIZAOCR' \
+                  -e AI__ChatGPT__ApiKey='$AI_CHATGPT_APIKEY' \
+                  -e AI__ChatGPT__Model='$AI_CHATGPT_MODEL' \
+                  -e Ocr__Aws__AccessKey='$OCR_AWS_ACCESS_KEY' \
+                  -e Ocr__Aws__SecretKey='$OCR_AWS_SECRET_KEY' \
+                  -e MTE__Url='$MTE_URL' \
+                  -p 80 \
+                  --restart unless-stopped \
+                  --name ${{ matrix.container }} \
+                  -v $HOME/.microsoft/usersecrets/:/root/.microsoft/usersecrets \
+                  -v '$STORAGE_PATH':/srv/ineditta/documentos \
+                  -d $REGISTRY/${{ matrix.image }}:${{ github.run_number }}
+
+          if docker ps -a --format '{{.Names}}' | grep '^reverse_proxy$'; then
+            docker stop reverse_proxy
+            docker start reverse_proxy
+          fi
+          docker logout $REGISTRY
+          EOF
+          rm -f private_key.pem
+        if: ${{ matrix.name == 'API' }}
+
+      - name: "SSH and execute commands Frontend"
+        run: |
+          # Write private key to a file
+          echo "$PRIVATE_KEY" > private_key
+          chmod 600 private_key
+
+          # Use SSH to connect to VM and process the image/container combo
+          ssh -o StrictHostKeyChecking=no -i private_key -p $PORT $USER@$HOST << EOF
+          # Check, stop and remove the container if it exists
+          if docker ps -a | grep -q ${{ matrix.container }}; then
+            docker stop ${{ matrix.container }}
+            docker rm ${{ matrix.container }}
+          fi
+
+          # Create the network if it doesn't exist
+          (docker network ls | grep ${{matrix.network}}) || docker network create ${{matrix.network}}
+          echo 'Processing ${{ matrix.image }}'
+          docker login ${{secrets.DOCKER_LOGIN}}
+          docker pull $REGISTRY/${{ matrix.image }}:${{github.run_number}}
+          docker run --network ${{matrix.network}} \
+                  -e URL='$URL' \
+                  -e ASPNETCORE_ENVIRONMENT=Homologacao \
+                  -e FRONTEND_CONFIG='$FRONTEND_CONFIG' \
+                  -e CONFIG_JSON='$CONFIG_JSON' \
+                  -e KEYCLOAK_CONFIG='$KEYCLOAK_CONFIG' \
+                  --restart unless-stopped \
+                  -p 80 \
+                  -v '$STORAGE_PATH':/srv/ineditta/documentos \
+                  --name ${{ matrix.container }} \
+                  -d $REGISTRY/${{ matrix.image }}:${{ github.run_number }}
+                  
+          if docker ps -a --format '{{.Names}}' | grep '^reverse_proxy$'; then
+            docker stop reverse_proxy
+            docker start reverse_proxy
+          fi
+          docker logout $REGISTRY
+          EOF
+          rm -f private_key.pem
+        if: ${{ matrix.name == 'Frontend' }}
+  deploy-prod:
+    runs-on: ubuntu-latest
+    environment: producao
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.deployment == 'producao'
+    env:
+      PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      HOST: ${{secrets.HOST}}
+      USER: ${{secrets.USER}}
+      URL: ${{vars.URL}}
+      FRONTEND_CONFIG: ${{vars.FRONTEND_CONFIG}}
+      FRONTEND_ORIGINS: ${{vars.FRONTEND_ORIGINS}}
+      KEYCLOAK_CONFIG: ${{vars.KEYCLOAK_CONFIG}}
+      KEYCLOACK_AUTHORITY: ${{vars.KEYCLOACK_AUTHORITY}}
+      KEYCLOACK_ADMIN: ${{vars.KEYCLOACK_ADMIN}}
+      KEYCLOACK_AUDIENCE: ${{vars.KEYCLOACK_AUDIENCE}}
+      DBCONNECTION: ${{secrets.DBCONNECTION}}
+      CONFIG_JSON: ${{secrets.CONFIG_JSON}}
+      PORT: ${{secrets.PORT}}
+      DOCKER_LOGIN: ${{secrets.DOCKER_LOGIN}}
+      STORAGE_PATH: ${{vars.STORAGE_PATH}}
+      SMTP_HOST: ${{secrets.SMTP_HOST}}
+      SMTP_PORT: ${{secrets.SMTP_PORT}}
+      SMTP_USERNAME: ${{secrets.SMTP_USERNAME}}
+      SMTP_PASSWORD: ${{secrets.SMTP_PASSWORD}}
+      SMTP_FROMEMAIL: ${{secrets.SMTP_FROMEMAIL}}
+      EMAIL_AWS_SOURCE: ${{secrets.EMAIL_AWS_SOURCE}}
+      EMAIL_AWS_ACCESS_KEY: ${{secrets.EMAIL_AWS_ACCESS_KEY}}
+      EMAIL_AWS_SECRET_KEY: ${{secrets.EMAIL_AWS_SECRET_KEY}}
+      COMPARATIVO_MAPA_SINDICAL: ${{vars.COMPARATIVO_MAPA_SINDICAL}}
+      FORMULARIO_APLICACAO: ${{vars.FORMULARIO_APLICACAO}}
+      RELATORIOACOMPANHAMENTOCCT: ${{vars.RELATORIOACOMPANHAMENTOCCT}}
+      RELATORIOCLAUSULAS: ${{vars.RELATORIOCLAUSULAS}}
+      GESTAO_CHAMADO_URL: ${{vars.GESTAO_CHAMADO_URL}}
+      FEATURE_MANAGEMENT_NOTIFICA_CALENDARIO_SINDICAL: ${{vars.FEATURE_MANAGEMENT_NOTIFICA_CALENDARIO_SINDICAL}}
+      AI_CHATGPT_APIKEY: ${{secrets.AI_CHATGPT_APIKEY}}
+      AI_CHATGPT_MODEL: ${{vars.AI_CHATGPT_MODEL}}
+      MTE_URL: ${{vars.MTE_URL}}
+      FEATUREMANAGEMENT_UTILIZAIA: ${{vars.FEATUREMANAGEMENT_UTILIZAIA}}
+      OCR_AWS_ACCESS_KEY: ${{secrets.OCR_AWS_ACCESS_KEY}}
+      OCR_AWS_SECRET_KEY: ${{secrets.OCR_AWS_SECRET_KEY}}
+      FEATUREMANAGEMENT_UTILIZAOCR: ${{vars.FEATUREMANAGEMENT_UTILIZAOCR}}
+    strategy:
+      matrix:
+        include:
+          - name: API
+            image: api
+            container: api
+            network: ineditta
+
+          - name: Frontend
+            image: frontend
+            container: frontend
+            network: ineditta
+    steps:
+      - name: "SSH and execute commands API"
+        run: |
+          # Write private key to a file
+          echo "$PRIVATE_KEY" > private_key
+          chmod 600 private_key
+
+          # Use SSH to connect to VM and process the image/container combo
+          ssh -o StrictHostKeyChecking=no -i private_key -p $PORT $USER@$HOST << EOF
+
+          # Check, stop and remove the container if it exists
+          if docker ps -a --format '{{.Names}}' | grep '^${{ matrix.container }}$'; then
+            docker stop ${{ matrix.container }}
+            docker rm ${{ matrix.container }}
+          fi
+
+          # Create the network if it doesn't exist
+          (docker network ls | grep ${{matrix.network}}) || docker network create ${{matrix.network}}
+          echo 'Processing ${{ matrix.image }}'
+          docker login ${{secrets.DOCKER_LOGIN}}
+          docker pull $REGISTRY/${{ matrix.image }}:${{github.event.inputs.run_number}}
+          docker run --network ${{matrix.network}} \
+                  -e ASPNETCORE_ENVIRONMENT=Production \
+                  -e Origins='$FRONTEND_ORIGINS' \
+                  -e ConnectionStrings__InedittaConnection='$DBCONNECTION' \
+                  -e Keycloack__Authority='$KEYCLOACK_AUTHORITY' \
+                  -e Keycloack__Admin='$KEYCLOACK_ADMIN' \
+                  -e Keycloack__Audience='$KEYCLOACK_AUDIENCE' \
+                  -e ASPNETCORE_URLS='http://+:80' \
+                  -e LANG=pt_BR.UTF-8 \
+                  -e LANGUAGE=pt_BR.UTF-8 \
+                  -e LC_ALL=pt_BR.UTF-8 \
+                  -e TZ='America/Sao_Paulo' \
+                  -e PATH_BASE='/api' \
+                  -e FileStorage__Path='$STORAGE_PATH' \
+                  -e Frontend__Url='$URL' \
+                  -e Email__Smtp__Host='$SMTP_HOST' \
+                  -e Email__Smtp__Port='$SMTP_PORT' \
+                  -e Email__Smtp__Username='$SMTP_USERNAME' \
+                  -e Email__Smtp__Password='$SMTP_PASSWORD' \
+                  -e Email__Smtp__FromEmail='$SMTP_FROMEMAIL' \
+                  -e Email__Aws__Source='$EMAIL_AWS_SOURCE' \
+                  -e Email__Aws__AccessKey='$EMAIL_AWS_ACCESS_KEY' \
+                  -e Email__Aws__SecretKey='$EMAIL_AWS_SECRET_KEY' \
+                  -e TemplateExcel__ComparativoMapaSindical='$COMPARATIVO_MAPA_SINDICAL' \
+                  -e TemplateExcel__FormularioAplicacao='$FORMULARIO_APLICACAO' \
+                  -e TemplateExcel__RelatorioAcompanhamentoCct='$RELATORIOACOMPANHAMENTOCCT' \
+                  -e TemplateExcel__RelatorioClausulas='$RELATORIOCLAUSULAS' \
+                  -e GestaoDeChamados__Url='$GESTAO_CHAMADO_URL' \
+                  -e FeatureManagement__NotificaCalendarioSindical='$FEATURE_MANAGEMENT_NOTIFICA_CALENDARIO_SINDICAL' \
+                  -e FeatureManagement__UtilizaIA='$FEATUREMANAGEMENT_UTILIZAIA' \
+                  -e FeatureManagement__UtilizaOcr='$FEATUREMANAGEMENT_UTILIZAOCR' \
+                  -e AI__ChatGPT__ApiKey='$AI_CHATGPT_APIKEY' \
+                  -e AI__ChatGPT__Model='$AI_CHATGPT_MODEL' \
+                  -e Ocr__Aws__AccessKey='$OCR_AWS_ACCESS_KEY' \
+                  -e Ocr__Aws__SecretKey='$OCR_AWS_SECRET_KEY' \
+                  -e MTE__Url='$MTE_URL' \
+                  -p 80 \
+                  --restart unless-stopped \
+                  --name ${{ matrix.container }} \
+                  -v $HOME/.microsoft/usersecrets/:/root/.microsoft/usersecrets \
+                  -v '$STORAGE_PATH':/srv/ineditta/documentos \
+                  -d $REGISTRY/${{ matrix.image }}:${{ github.event.inputs.run_number }}
+
+          if docker ps -a --format '{{.Names}}' | grep '^reverse_proxy$'; then
+            docker stop reverse_proxy
+            docker start reverse_proxy
+          fi
+          docker logout $REGISTRY
+          EOF
+          rm -f private_key.pem
+        if: ${{ matrix.name == 'API' }}
+
+      - name: "SSH and execute commands Frontend"
+        run: |
+          # Write private key to a file
+          echo "$PRIVATE_KEY" > private_key
+          chmod 600 private_key
+
+          # Use SSH to connect to VM and process the image/container combo
+          ssh -o StrictHostKeyChecking=no -i private_key -p $PORT $USER@$HOST << EOF
+          # Check, stop and remove the container if it exists
+          if docker ps -a | grep -q ${{ matrix.container }}; then
+            docker stop ${{ matrix.container }}
+            docker rm ${{ matrix.container }}
+          fi
+
+          # Create the network if it doesn't exist
+          (docker network ls | grep ${{matrix.network}}) || docker network create ${{matrix.network}}
+          echo 'Processing ${{ matrix.image }}'
+          docker login ${{secrets.DOCKER_LOGIN}}
+          docker pull $REGISTRY/${{ matrix.image }}:${{github.event.inputs.run_number}}
+          docker run --network ${{matrix.network}} \
+                  -e URL='$URL' \
+                  -e FRONTEND_CONFIG='$FRONTEND_CONFIG' \
+                  -e CONFIG_JSON='$CONFIG_JSON' \
+                  -e KEYCLOAK_CONFIG='$KEYCLOAK_CONFIG' \
+                  --restart unless-stopped \
+                  -p 80 \
+                  -v '$STORAGE_PATH':/srv/ineditta/documentos \
+                  --name ${{ matrix.container }} \
+                  -d $REGISTRY/${{ matrix.image }}:${{ github.event.inputs.run_number }}
+                  
+          if docker ps -a --format '{{.Names}}' | grep '^reverse_proxy$'; then
+            docker stop reverse_proxy
+            docker start reverse_proxy
+          fi
+          docker logout $REGISTRY
+          EOF
+          rm -f private_key.pem
+        if: ${{ matrix.name == 'Frontend' }}

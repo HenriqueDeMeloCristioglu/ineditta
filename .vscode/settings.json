@@ -1,0 +1,9 @@
+{
+    "dotnet.defaultSolution": "Ineditta.sln",
+    "material-icon-theme.folders.associations": {
+        "features":  "Cluster",
+        "application": "App",
+        "data-tabels": "Layout",
+        "actions": "Taskfile"
+    }
+}

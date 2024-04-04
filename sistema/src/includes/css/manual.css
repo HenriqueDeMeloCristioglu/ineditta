@@ -1,0 +1,70 @@
+main#main {
+    padding: 0px 30px 30px;
+}
+
+main#main .manual h3 {
+    text-align: center;
+    font-weight: 600;
+}
+main#main .manual :is(p, ul li) {
+    font-size: 17px;
+}
+
+main#main .duvidas {
+    margin-top: 50px;
+}
+main#main .duvidas h2 {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 40px;
+}
+main#main .duvidas .icon-duvida {
+    width: 48px;
+    transform: translate(3px, -9px);
+}
+
+main#main .duvidas #accordionIneditta .accordion-item .accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 17px 20px;
+    background-color: #4f8edc;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+}
+main#main .duvidas #accordionIneditta .accordion-item:nth-child(1) .accordion-header {
+    border-radius: 5px 5px 0px 0px;
+}
+main#main .duvidas #accordionIneditta .accordion-item:last-child:not(.open) .accordion-header {
+    border-radius: 0px 0px 5px 5px;
+}
+main#main .duvidas #accordionIneditta .accordion-item:last-child .accordion-body {
+    border-radius: 0px 0px 5px 5px;
+}
+main#main .duvidas #accordionIneditta .accordion-item .accordion-header i {
+    font-size: 26px;
+    transform: scale(1.1);
+    transition: all 0.3s;
+}
+main#main .duvidas #accordionIneditta .accordion-item.open .accordion-header i {
+    transform: rotate(180deg);
+}
+main#main .duvidas #accordionIneditta .accordion-item .accordion-body {
+    padding: 0px;
+    font-size: 17px;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    overflow-y: hidden;
+    height: 0;
+    opacity: 0;
+    transition: all 0.3s;
+}
+main#main .duvidas #accordionIneditta .accordion-item.open .accordion-body {
+    padding: 20px;
+    height: auto;
+    opacity: 1;
+}
+main#main .duvidas #accordionIneditta .accordion-item.open .accordion-body img {
+    width: 100%;
+}

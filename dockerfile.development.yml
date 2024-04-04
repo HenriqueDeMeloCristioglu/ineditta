@@ -1,0 +1,29 @@
+FROM php:8.0-apache as base
+
+WORKDIR /var/www/html
+
+RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/*
+
+# Install additional PHP extensions if needed
+RUN apt-get update
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    unzip 
+
+RUN docker-php-ext-install mysqli
+
+RUN pecl install xdebug
+RUN docker-php-ext-enable xdebug
+
+# Enable Apache modules if needed
+RUN a2enmod rewrite
+
+COPY ./conf /usr/local/etc/php/
+COPY ./conf/xdebug /usr/local/etc/php/conf.d/
+COPY ./startup.sh /startup.sh
+
+RUN chmod -R 777 /var/log && chmod +x /startup.sh
+
+CMD ["/startup.sh"]

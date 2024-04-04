@@ -1,0 +1,6 @@
+export * from './downloads'
+export * from './informacoes-adicionais'
+export * from './upsert'
+export * from './obter-clausulas-por-id'
+export * from './obter-informacoes-adicionais-por-documento'
+export * from './obter-localidades'

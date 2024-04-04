@@ -1,0 +1,31 @@
+.pf-c-form-password {
+  width: 100%;
+  position: relative;
+}
+
+.pf-c-form-password button {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  outline: none;
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  top: 1px;
+  right: 0;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-pf {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.button-icon {
+  margin-right: 5px;
+  margin-top: 8px;
+}

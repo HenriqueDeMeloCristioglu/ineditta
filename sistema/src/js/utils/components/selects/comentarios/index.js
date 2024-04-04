@@ -1,0 +1,5 @@
+export * from './tipo-comentario'
+export * from './tipo-usuario'
+export * from './tipo-notificacao'
+export * from './assunto'
+export * from './usuario-destino'

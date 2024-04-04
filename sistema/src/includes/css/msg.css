@@ -1,0 +1,28 @@
+
+#mensagem_sucesso, #mensagem_sucesso2, #msg-sucesso{ 
+    display: none;
+}
+
+#mensagem_error, #mensagem_error2, #msg-erro{ 
+    display: none;
+}
+
+#mensagem_alterado_sucesso{ 
+    display: none;
+}
+#mensagem_alterado_error{ 
+    display: none;
+}
+#mensagem_sucessou{ 
+    display: none;
+}
+#mensagem_erroru{ 
+    display: none;
+}
+#mensagem_alterado_sucessou, #mensagem_alterado_sucessou2{ 
+    display: none;
+}
+
+#mensagem_alterado_erroru, #mensagem_alterado_erroru2{ 
+    display: none;
+}

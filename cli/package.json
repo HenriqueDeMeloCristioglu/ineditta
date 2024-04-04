@@ -1,0 +1,17 @@
+{
+  "name": "cli",
+  "version": "1.0.0",
+  "description": "cli for ineditta",
+  "main": "index.js",
+  "type": "common",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate:frontend": "node ./frontend/app.js",
+    "generate:backend": "node ./backend/app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^12.0.0"
+  }
+}

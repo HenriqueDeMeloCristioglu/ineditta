@@ -1,0 +1,80 @@
+version: '3.4'
+services:
+  app:
+    environment:
+       XDEBUG_MODE: debug
+       XDEBUG_CONFIG: client_host=host.docker.internal client_port=9003 remote_autostart=1
+    ports:
+       - 8090:80
+    volumes:
+       - C:\\temp\\docker\\ineditta\\logs:/var/log
+       - C:\temp\docker\ineditta\documentos:/srv/ineditta/documentos
+       - ./sistema/dist:/var/www/html
+  database:
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ineditta
+      MYSQL_USER: ineditta
+      MYSQL_PASSWORD: ineditta
+      MYSQL_INNODB_FORCE_RECOVERY: "1" # Setting innodb_force_recovery
+      LC_TIME: pt_BR.UTF-8
+      MYSQL_LOG_BIN_TRUST_FUNCTION_CREATORS: 1
+    volumes:
+      - C:\\temp\\docker\\ineditta\\mysql\\:/var/lib/mysql
+      - ./database:/dumps
+    ports:
+      - 3306:3306
+  sso:
+    environment:
+      DB_VENDOR: postgres
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://ssodb:5432/keycloakdb
+      KC_DB_URL_PROPERTIES: "sslmode=prefer"
+      KC_DB_URL_HOST: ssodb
+      KC_DB_URL_DATABASE: keycloakdb
+      KC_DB_USERNAME: keycloak
+      KC_DB_URL_PORT: 5432
+      KC_DB_SCHEMA: public
+      KC_DB_PASSWORD: keycloak
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      JDBC_PARAMS: "sslmode=prefer"
+      PROXY_ADDRESS_FORWARDING: "true"
+      DEBUG: true
+      ROOT_LOGLEVEL: DEBUG
+      DEBUG_PORT: "*:8787"
+      KEYCLOAK_LOGLEVEL: ALL
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8000
+      KC_HOSTNAME_ADMIN_URL: http://localhost:8000/auth
+      KC_HOSTNAME_PATH: /auth
+      KC_PROXY: edge
+    volumes:
+      - C:\\temp\\docker\\ineditta\\keycloak\\data\\:/opt/jboss/keycloak/standalone/data
+      - C:\\temp\\docker\\ineditta\\keycloak\\logs\\:/opt/jboss/keycloak/standalone/log
+    ports:
+      - 8092:8080
+      - 8787:8787
+  ssodb:
+    environment:
+      POSTGRES_DB: keycloakdb
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - C:\\temp\\docker\\ineditta\\postgres\\:/var/lib/postgresql/data
+      - ./database/auth:/dumps
+    ports:
+      - 5432:5432
+  mailhog:
+    ports:
+      - "8025:8025"  # Web UI
+      - "1025:1025"  # SMTP
+  reverse_proxy:
+     ports:
+      - 8000:8000
+     volumes:
+      - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./conf/nginx/ssl/:/etc/nginx/ssl:ro

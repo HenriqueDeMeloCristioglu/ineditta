@@ -1,0 +1,1 @@
+export * from './clausulas/ia-clausula-status'

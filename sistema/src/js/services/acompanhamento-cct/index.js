@@ -1,0 +1,5 @@
+export * from './acompanhamento-cct-service'
+export * from './acompanhamento-cct-status-opcao-service'
+export * from './acompanhamento-cct-fases-service'
+export * from './acompanhamento-cct-localizacoes-service'
+export * from './acompanhamento-cct-etiqueta-opcao-service'

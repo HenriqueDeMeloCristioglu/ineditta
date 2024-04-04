@@ -1,0 +1,6 @@
+export * from './obter-clausulas-por-id'
+export * from './obter-configuracoes-email-por-documento'
+export * from './obter-documento-por-id'
+export * from './obter-grupo-empresas-por-documento'
+export * from './obter-sinonimos'
+export * from './obter-gerar-resumo-permissao'

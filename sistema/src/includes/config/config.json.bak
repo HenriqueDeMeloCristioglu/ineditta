@@ -1,0 +1,22 @@
+{
+	"databases": [
+		{
+			"name": "ineditta",
+			"dbType": "mysql",
+			"database": {
+				"host": "localhost:3306",
+				"user": "root",
+				"password": "Dede271001@root",
+				"dbName": "BancoIneditta_PRCC"
+			}
+		}
+	],
+	"card": [
+		{
+			"name": "servico",
+			"information": {
+				"idchamado": "1"
+			}
+		}
+	]
+}

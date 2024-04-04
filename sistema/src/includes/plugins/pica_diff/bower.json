@@ -1,0 +1,11 @@
+{
+  "name": "picadiff",
+  "version": "0.7.3",
+  "dependencies": {
+    "google-diff-match-patch-js": "~1.0.0"
+  },
+  "devDependencies": {
+    "qunit": "~1.12.0",
+    "jquery": "~2.1.0"
+  }
+}

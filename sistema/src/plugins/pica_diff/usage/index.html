@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+    Remove this if you use the .htaccess -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="style.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/jquery.picadiff.css"/>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+    <script src="diff_match_patch.js"></script>
+
+
+    <!-- Helper Classes -->
+    <script type="text/javascript" src="../src/diff_match_patch_extended.js"></script>
+
+
+    <!-- Widget -->
+    <script src="../src/picadiff.js"></script>
+
+    <!-- Script showing the usage of the widget -->
+    <script>
+      $(document).ready(function(){
+          $('form').submit(function(event){
+            event.preventDefault();
+            $('.picadiff').picadiff({
+              leftContent: $('.leftForm textarea').val(),
+              rightContent: $('.rightForm textarea').val()
+            });
+          });
+          $(".picadiff").picadiff();
+      });
+    </script>
+<link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+  <title>jQuery picadiff Plugin Demo</title>
+  </head>
+
+  <body><div id="jquery-script-menu">
+<div class="jquery-script-center">
+<ul>
+<li><a href="http://www.jqueryscript.net/text/jQuery-Plugin-To-Find-The-Difference-Between-Two-Texts-picadiff.html">Download This Plugin</a></li>
+<li><a href="http://www.jqueryscript.net/">Back To jQueryScript.Net</a></li>
+</ul>
+<div class="jquery-script-ads"><script type="text/javascript"><!--
+google_ad_client = "ca-pub-2783044520727903";
+/* jQuery_demo */
+google_ad_slot = "2780937993";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script></div>
+<div class="jquery-script-clear"></div>
+</div>
+</div>
+  <div class="container">
+    <form id="form">
+      <div class="leftForm form">
+        <h2>Left text</h2>
+        <textarea name="" id="" cols="40" rows="20">
+In the area of East Los Angeles, in 1982, in an environment that values a quick fix over education and learning, Escalante was a new math teacher at Garfield High School determined to change the system and challenge the students to a higher level of achievement.[2] Escalante was at first not well liked by students, receiving numerous taunts and threats. As the year progressed, he was able to win over the attention of the students by implementing innovative teaching techniques. [3] He transformed even the most troublesome teens into dedicated students. While Escalante was teaching basic arithmetic and algebra, he realized that his students have far more potential. He decides to teach them calculus. To do so, he held a summer course in pre-calculus.[4] Despite concerns and skepticism of other teachers, who felt that "you can't teach logarithms to illiterates," Escalante nonetheless developed a program in which his students can eventually take AP Calculus by their senior year. Taking the AP Calculus exam in the spring of their senior year, his students are relieved and overjoyed to find that they have all passed, a feat done by few in the state.</textarea>
+      </div>
+      <div class="rightForm form">
+        <h2>Right text</h2>
+        <textarea name="" id="" cols="40" rows="20">In the area of East Los Angeles, California, in 1982, in an environment that values a quick fix over education and learning, Jaime "Kemo" Escalante is a new teacher at Garfield High School determined to change the system and challenge the students to a higher level of achievement. Leaving a steady job for a position as a math teacher in a school where rebellion runs high and teachers are more focused on discipline than academics, Escalante is at first not well liked by students, receiving numerous taunts and threats. As the year progresses, he is able to win over the attention of the students by implementing innovative teaching techniques. He is able to transform even the most troublesome teens into dedicated students. While Escalante teaches basic arithmetic and elementary and intermediate algebra, he realizes that his students have far more potential. He decides to teach them calculus. To do so, he holds a summer course of what is implied in the movie as pre-calculus material, such as advanced algebra, math analysis, and trigonometry. Calculus starts in the students' senior year. Despite concerns and skepticism of other teachers, who feel that "you can't teach logarithms to illiterates," Escalante nonetheless develops a program in which his students can eventually take AP Calculus by their senior year, which will give them college credit. This intense math program requires that students take summer classes, including Saturdays from 7:00 AM to noon, taxing for even the most devoted among them. While other students spend their summers working, Escalante's students learn complex theorems and formulas. The vast contrast between home life and school life, however, begins to show as these teens struggle to find the balance between what other adults and especially their parents expect of them and the goals and ambitions they hold for themselves. Several students must confront issues at home. In a memorable scene, Escalante follows Claudia as she leaves the classroom and runs through the school. With Escalante to help them, they soon find the courage to separate from society's expectations for failure and rise to the standard that Escalante had set for them. Taking the AP Calculus exam in the spring of their senior year, these students are relieved and overjoyed to be finished with a strenuous year. After receiving their scores, they are overwhelmed with emotion</textarea>
+      </div>
+      <input type="submit" value="submit">
+    </form>
+    <div class="picadiff">
+      <div class="picadiff-content">
+        <div class='left'>
+          In the area of East Los Angeles, in 1982, in an environment that values a quick fix over education and learning, Escalante was a new math teacher at Garfield High School determined to change the system and challenge the students to a higher level of achievement.[2] Escalante was at first not well liked by students, receiving numerous taunts and threats. As the year progressed, he was able to win over the attention of the students by implementing innovative teaching techniques. [3] He transformed even the most troublesome teens into dedicated students. While Escalante was teaching basic arithmetic and algebra, he realized that his students have far more potential. He decides to teach them calculus. To do so, he held a summer course in pre-calculus.[4] Despite concerns and skepticism of other teachers, who felt that "you can't teach logarithms to illiterates," Escalante nonetheless developed a program in which his students can eventually take AP Calculus by their senior year. Taking the AP Calculus exam in the spring of their senior year, his students are relieved and overjoyed to find that they have all passed, a feat done by few in the state.
+        </div>
+        <div class='right'>
+          In the area of East Los Angeles, California, in 1982, in an environment that values a quick fix over education and learning, Jaime "Kemo" Escalante is a new teacher at Garfield High School determined to change the system and challenge the students to a higher level of achievement. Leaving a steady job for a position as a math teacher in a school where rebellion runs high and teachers are more focused on discipline than academics, Escalante is at first not well liked by students, receiving numerous taunts and threats. As the year progresses, he is able to win over the attention of the students by implementing innovative teaching techniques. He is able to transform even the most troublesome teens into dedicated students. While Escalante teaches basic arithmetic and elementary and intermediate algebra, he realizes that his students have far more potential. He decides to teach them calculus. To do so, he holds a summer course of what is implied in the movie as pre-calculus material, such as advanced algebra, math analysis, and trigonometry. Calculus starts in the students' senior year. Despite concerns and skepticism of other teachers, who feel that "you can't teach logarithms to illiterates," Escalante nonetheless develops a program in which his students can eventually take AP Calculus by their senior year, which will give them college credit. This intense math program requires that students take summer classes, including Saturdays from 7:00 AM to noon, taxing for even the most devoted among them. While other students spend their summers working, Escalante's students learn complex theorems and formulas. The vast contrast between home life and school life, however, begins to show as these teens struggle to find the balance between what other adults and especially their parents expect of them and the goals and ambitions they hold for themselves. Several students must confront issues at home. In a memorable scene, Escalante follows Claudia as she leaves the classroom and runs through the school. With Escalante to help them, they soon find the courage to separate from society's expectations for failure and rise to the standard that Escalante had set for them. Taking the AP Calculus exam in the spring of their senior year, these students are relieved and overjoyed to be finished with a strenuous year. After receiving their scores, they are overwhelmed with emotion
+        </div>
+      </div>
+    </div>
+  </div><script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36251023-1']);
+  _gaq.push(['_setDomainName', 'jqueryscript.net']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+  </body>
+</html>

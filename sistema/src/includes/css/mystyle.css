@@ -1,0 +1,252 @@
+/* Menu */
+/* body {
+    margin: 0;
+    padding: 0;
+}
+.menu {
+    display: flex;
+    align-items: center;
+    font-size: 1.5em;
+    background-color: #313338;
+    padding: 10px 0;
+}
+
+.menu #menu-content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.menu a {
+    color: rgb(150, 150, 150);
+    text-decoration: none;
+}
+
+.menu a:hover {
+    color: #fff;
+}
+
+.menu .active {
+    color: #fff;
+}
+
+.menu .menu-content ul {
+    display: flex;
+    list-style: none;
+    justify-content: space-around;
+    margin-bottom: 0;
+}
+
+.menu .menu-content ul li a i {
+    margin: 0px 5px 0 5px;
+}
+
+
+.search {
+    font-size: 1.2em;
+    color: white;
+}
+
+.search:hover {
+    color: gray;
+}
+
+.buttons {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.buttons ul {
+    list-style: none;
+    margin-bottom: 0;
+}
+
+.buttons ul li {
+    position: relative;
+}
+
+.buttons ul li ul {
+    background: #fff;
+    border: .08em solid #ededed;
+    position: absolute;
+    padding: 10px 0;
+    padding-left: 0px;
+    width: 200px;
+    right: 0;
+    top: 30px;
+    z-index: 10;
+
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.buttons .active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.buttons ul li ul li:nth-child(1) {
+    border-bottom: 1px solid #ededed;
+}
+
+.buttons ul li ul li:nth-child(4) {
+    border-top: 1px solid #ededed;
+}
+
+.buttons ul li ul a {
+    padding: 5px 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.buttons ul li ul a i {
+    color: #000;
+}
+
+.buttons ul li ul li:hover {
+    background-color: #ededed;
+}
+
+.buttons ul li ul li:hover a{
+color: #000;
+}
+
+.btn-mobile {
+    border: none;
+    background-color: transparent;
+    color: #fff;
+    font-size: 1.5em;
+    display: none;
+}
+
+.active-btn {
+    display: block !important;
+} */
+
+#page-content .cards {
+    display: flex;
+    align-items: center;
+}
+
+.negocia {
+    padding: 0 20px;
+    flex-basis: 100%;
+}
+
+header h1 {
+    font-weight: 600;
+    font-size: 2em;
+}
+
+.negocia-content ol li {
+    padding-top: 5px;
+    color: rgb(0, 95, 139);
+    font-size: 1.3em;
+}
+
+.icons {
+    font-size: 1.8em;
+    color: white;
+    padding-right: 20px;
+}
+
+.index {
+    padding: 0 10px;
+}
+
+.index h1 {
+    padding-left: 10px;
+}
+
+
+.map {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.map .table-list {
+    border-right: 1px solid #ccc;
+    padding-right: 50px;
+    font-size: 1.5em;
+}
+
+.map .table-list h5 {
+    font-size: 1.5em;
+}
+
+.map .table-list p {
+    display: flex;
+    justify-content: space-between;
+}
+
+.map svg {
+    max-width: 400px;
+}
+
+.bottom-index {
+    font-size: 0.5em;
+}
+
+.tiles-index {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.callendary {
+    padding: 0 20px;
+}
+
+.footer-section {
+    background-color:#ededed ;
+    padding: 20px;
+}
+
+.footer-section h1, h2 {
+    font-size: 2em;
+}
+
+.footer-section p {
+    font-size: 1.1em;
+}
+
+.footer-section h3 {
+    font-weight: bold;
+}
+
+
+/* PAGINA PERFIL 3 E 4 */
+
+#calendario-sindical .tbl-item i {
+    font-size: 20px;
+}
+
+
+.fa-times-circle-o {
+    color: red;
+    float: right;
+    margin-right: 30px;
+}
+
+.fa-check-circle-o {
+    color: green;
+    float: right;
+    margin-right: 30px;
+}
+
+.fa-check-square-o {
+    color: green;
+}
+
+.fa-tasks {
+    color: black;
+    float: right;
+    margin-right: 30px;
+}
+
+.fa-sign-in {
+    color: black;
+}

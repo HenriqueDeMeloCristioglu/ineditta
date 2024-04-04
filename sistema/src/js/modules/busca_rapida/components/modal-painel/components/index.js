@@ -1,0 +1,5 @@
+export * from './clausula-painel/clausula-painel'
+export * from './texto-clausula-painel'
+export * from './estabelecimento-painel'
+export * from './clausula-cliente-data-table-painel'
+export * from './clausula-cliente-painel'

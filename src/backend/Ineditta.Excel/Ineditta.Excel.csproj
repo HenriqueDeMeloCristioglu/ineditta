@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.102.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ineditta.Application\Ineditta.Application.csproj" />
+    <ProjectReference Include="..\Ineditta.BuildingBlocks.Core\Ineditta.BuildingBlocks.Core.csproj" />
+  </ItemGroup>
+
+</Project>

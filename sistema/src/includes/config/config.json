@@ -1,0 +1,22 @@
+{
+	"databases": [
+		{
+			"name": "ineditta",
+			"dbType": "mysql",
+			"database": {
+				"host": "database:3306",
+				"user": "ineditta",
+				"password": "ineditta",
+				"dbName": "ineditta"
+			}
+		}
+	],
+	"card": [
+		{
+			"name": "servico",
+			"information": {
+				"idchamado": "1"
+			}
+		}
+	]
+}

@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Email\Binders\**" />
+    <Compile Remove="Email\Models\**" />
+    <EmbeddedResource Remove="Email\Binders\**" />
+    <EmbeddedResource Remove="Email\Models\**" />
+    <None Remove="Email\Binders\**" />
+    <None Remove="Email\Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.Core" Version="3.7.302.4" />
+    <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.300.44" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.300.44" />
+    <PackageReference Include="AWSSDK.Textract" Version="3.7.300.4" />
+    <PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.14" />
+    <PackageReference Include="PDFtoImage" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ineditta.Application\Ineditta.Application.csproj" />
+  </ItemGroup>
+
+</Project>
